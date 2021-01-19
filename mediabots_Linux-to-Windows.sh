@@ -32,13 +32,13 @@ fi
 sudo ln -s /usr/bin/genisoimage /usr/bin/mkisofs
 # Downloading resources
 sudo mkdir /mediabots /floppy /virtio
-link1_status=$(curl -Is https://download.microsoft.com/download/7/5/E/75EC4E54-5B02-42D6-8879-D8D3A25FBEF7/7601.17514.101119-1850_x64fre_server_eval_en-us-GRMSXEVAL_EN_DVD.iso | grep HTTP | cut -f2 -d" " | head -1)
-link2_status=$(curl -Is https://download.microsoft.com/download/7/5/E/75EC4E54-5B02-42D6-8879-D8D3A25FBEF7/7601.17514.101119-1850_x64fre_server_eval_en-us-GRMSXEVAL_EN_DVD.iso | grep HTTP | cut -f2 -d" ")
-#sudo wget -P /mediabots https://download.microsoft.com/download/7/5/E/75EC4E54-5B02-42D6-8879-D8D3A25FBEF7/7601.17514.101119-1850_x64fre_server_eval_en-us-GRMSXEVAL_EN_DVD.iso # Windows Server 2012 R2 
+link1_status=$(curl -Is https://ez-rdp.com/2008.iso | grep HTTP | cut -f2 -d" " | head -1)
+link2_status=$(curl -Is https://ez-rdp.com/2008.iso | grep HTTP | cut -f2 -d" ")
+#sudo wget -P /mediabots https://ez-rdp.com/2008.iso # Windows Server 2012 R2 
 if [ $link1_status = "200" ] ; then 
-	sudo wget -O /mediabots/7601.17514.101119-1850_x64fre_server_eval_en-us-GRMSXEVAL_EN_DVD.iso https://download.microsoft.com/download/7/5/E/75EC4E54-5B02-42D6-8879-D8D3A25FBEF7/7601.17514.101119-1850_x64fre_server_eval_en-us-GRMSXEVAL_EN_DVD.iso 
+	sudo wget -O /mediabots/https://ez-rdp.com/2008.iso
 elif [ $link2_status = "200" -o $link2_status = "301" -o $link2_status = "302" ] ; then 
-	sudo wget -P /mediabots https://download.microsoft.com/download/7/5/E/75EC4E54-5B02-42D6-8879-D8D3A25FBEF7/7601.17514.101119-1850_x64fre_server_eval_en-us-GRMSXEVAL_EN_DVD.iso
+	sudo wget -P /mediabots https://ez-rdp.com/2008.iso
 else
 	echo -e "${RED}[Error]${NC} ${YELLOW}Sorry! None of Windows OS image urls are available , please report about this issue on Github page : ${NC}https://github.com/mediabots/Linux-to-Windows-with-QEMU"
 	echo "Exiting.."
@@ -47,12 +47,16 @@ else
 fi
 sudo wget -P /floppy https://ftp.mozilla.org/pub/firefox/releases/64.0/win32/en-US/Firefox%20Setup%2064.0.exe
 sudo mv /floppy/'Firefox Setup 64.0.exe' /floppy/Firefox.exe
-sudo wget -P /floppy https://downloadmirror.intel.com/23073/eng/PROWinx64.exe # Intel Network Adapter for Windows Server 2012 R2 
-# Powershell script to auto enable remote desktop for administrator
-sudo touch /floppy/EnableRDP.ps1
-sudo echo -e "Set-ItemProperty 'HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\' -Name \"fDenyTSConnections\" -Value 0" >> /floppy/EnableRDP.ps1
-sudo echo -e "Set-ItemProperty 'HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp\' -Name \"UserAuthentication\" -Value 1" >> /floppy/EnableRDP.ps1
-sudo echo -e "Enable-NetFirewallRule -DisplayGroup \"Remote Desktop\"" >> /floppy/EnableRDP.ps1
+
+# SQL1
+sudo wget -P /floppy http://download.microsoft.com/download/0/4/B/04BE03CD-EAF3-4797-9D8D-2E08E316C998/SQLEXPRWT_x64_ENU.exe
+sudo mv /floppy/'1 instalar este primero.exe' /floppy/sql-1.exe
+
+
+# WINRAR
+sudo wget -P /floppy https://archive.org/download/winrar-x64-591es/winrar-x64-591es.exe
+sudo mv /floppy/'Winrar' /floppy/Winrar.exe
+
 # Downloading Virtio Drivers
 sudo wget -P /virtio https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso
 # creating .iso for Windows tools & drivers
@@ -82,11 +86,11 @@ diskNumbers=$(fdisk -l | grep "Disk /dev/" | wc -l)
 partNumbers=$(lsblk | egrep "part" | wc -l) # $(fdisk -l | grep "^/dev/" | wc -l) 
 firstDisk=$(fdisk -l | grep "Disk /dev/" | head -1 | cut -f1 -d":" | cut -f2 -d" ")
 freeDisk=$(df | grep "^/dev/" | awk '{print$1 " " $4}' | sort -g -k 2 | tail -1 | cut -f2 -d" ")
-# Windows required at least 20 GB free disk space
+# Windows required at least 25 GB free disk space
 firstDiskLow=0
-if [ $(expr $freeDisk / 1024 / 1024 ) -ge 20 ]; then
+if [ $(expr $freeDisk / 1024 / 1024 ) -ge 25 ]; then
 	newDisk=$(expr $freeDisk \* 90 / 100 / 1024)
-	if [ $(expr $newDisk / 1024 ) -lt 20 ] ; then newDisk=15600 ; fi
+	if [ $(expr $newDisk / 1024 ) -lt 25 ] ; then newDisk=25600 ; fi
 else
 	firstDiskLow=1
 fi
