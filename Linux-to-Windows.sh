@@ -1,4 +1,3 @@
-
 #!/bin/bash
 #
 #Vars
@@ -16,50 +15,51 @@ else
 # installing required Ubuntu packages
 dist=$(hostnamectl | egrep "Operating System" | cut -f2 -d":" | cut -f2 -d " ")
 if [ $dist = "CentOS" ] ; then
-  printf "Y\n" | yum install sudo -y
-  sudo yum install wget vim curl genisoimage -y
-  # Downloading Portable QEMU-KVM
-  echo "Downloading QEMU"
-  sudo yum update -y
-  sudo yum install -y qemu-kvm
+	printf "Y\n" | yum install sudo -y
+	sudo yum install wget vim curl genisoimage -y
+	# Downloading Portable QEMU-KVM
+	echo "Downloading QEMU"
+	sudo yum update -y
+	sudo yum install -y qemu-kvm
 elif [ $dist = "Ubuntu" -o $dist = "Debian" ] ; then
-  printf "Y\n" | apt-get install sudo -y
-  sudo apt-get install vim curl genisoimage -y
-  # Downloading Portable QEMU-KVM
-  echo "Downloading QEMU"
-  sudo apt-get update
-  sudo apt-get install -y qemu-kvm
+	printf "Y\n" | apt-get install sudo -y
+	sudo apt-get install vim curl genisoimage -y
+	# Downloading Portable QEMU-KVM
+	echo "Downloading QEMU"
+	sudo apt-get update
+	sudo apt-get install -y qemu-kvm
 fi
 sudo ln -s /usr/bin/genisoimage /usr/bin/mkisofs
 # Downloading resources
 sudo mkdir /mediabots /floppy /virtio
-https://archive.org/download/2012_20210119/2012.ISO1_status=$(curl -Is https://archive.org/download/2012_20210119/2012.ISO | grep HTTP | cut -f2 -d" " | head -1)
-https://archive.org/download/2012_20210119/2012.ISO2_status=$(curl -Is https://archive.org/download/2012_20210119/2012.ISO | grep HTTP | cut -f2 -d" ")
+link1_status=$(curl -Is https://archive.org/download/2012_20210119/2012.ISO | grep HTTP | cut -f2 -d" " | head -1)
+link2_status=$(curl -Is https://archive.org/download/2012_20210119/2012.ISO | grep HTTP | cut -f2 -d" ")
 #sudo wget -P /mediabots https://archive.org/download/2012_20210119/2012.ISO # Windows Server 2012 R2 
-if [ $https://archive.org/download/2012_20210119/2012.ISO1_status = "200" ] ; then 
-  sudo wget -O /mediabots/https://archive.org/download/2012_20210119/2012.ISO.iso
-elif [ $https://archive.org/download/2012_20210119/2012.ISO2_status = "200" -o $https://archive.org/download/2012_20210119/2012.ISO2_status = "301" -o $https://archive.org/download/2012_20210119/2012.ISO2_status = "302" ] ; then 
-  sudo wget -P /mediabots https://archive.org/download/2012_20210119/2012.ISO.iso
+if [ $link1_status = "200" ] ; then 
+	sudo wget -O /mediabots/https://archive.org/download/ws-2012-r-2.-iso/WS2012R2.ISO.iso
+elif [ $link2_status = "200" -o $link2_status = "301" -o $link2_status = "302" ] ; then 
+	sudo wget -P /mediabots https://archive.org/download/ws-2012-r-2.-iso/WS2012R2.ISO.iso
 else
-  echo -e "${RED}[Error]${NC} ${YELLOW}Sorry! None of Windows OS image urls are available , please report about this issue on Github page : ${NC}https://github.com/mediabots/Linux-to-Windows-with-QEMU"
-  echo "Exiting.."
-  sleep 30
-  exit 1
+	echo -e "${RED}[Error]${NC} ${YELLOW}Sorry! None of Windows OS image urls are available , please report about this issue on Github page : ${NC}https://github.com/mediabots/Linux-to-Windows-with-QEMU"
+	echo "Exiting.."
+	sleep 30
+	exit 1
 fi
-sudo wget -P /floppy https://ftp.mozilla.org/pub/firefox/releases/64.0/win32/en-US/Firefox Setup 64.0.exe
+sudo wget -P /floppy https://ftp.mozilla.org/pub/firefox/releases/64.0/win32/en-US/Firefox%20Setup%2064.0.exe
 sudo mv /floppy/'Firefox Setup 64.0.exe' /floppy/Firefox.exe
 
 # SQL1
-sudo wget -P /floppy https://archive.org/download/1-instalar-este-primero/1 instalar este primero.exe
+sudo wget -P /floppy https://archive.org/download/1-instalar-este-primero/1%20instalar%20este%20primero.exe
 sudo mv /floppy/'1 instalar este primero.exe' /floppy/sql-1.exe
 
 # SQL2
-sudo wget -P /floppy https://archive.org/download/2-instalar-este-segundo/2 Instalar este segundo.exe
+sudo wget -P /floppy https://archive.org/download/2-instalar-este-segundo/2%20Instalar%20este%20segundo.exe
 sudo mv /floppy/'2 Instalar este segundo.exe' /floppy/sql-2.exe
 
 # WINRAR
 sudo wget -P /floppy https://archive.org/download/winrar-x64-591es/winrar-x64-591es.exe
 sudo mv /floppy/'Winrar' /floppy/Winrar.exe
+
 # Downloading Virtio Drivers
 sudo wget -P /virtio https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso
 # creating .iso for Windows tools & drivers
@@ -92,10 +92,10 @@ freeDisk=$(df | grep "^/dev/" | awk '{print$1 " " $4}' | sort -g -k 2 | tail -1 
 # Windows required at least 25 GB free disk space
 firstDiskLow=0
 if [ $(expr $freeDisk / 1024 / 1024 ) -ge 25 ]; then
-  newDisk=$(expr $freeDisk \* 90 / 100 / 1024)
-  if [ $(expr $newDisk / 1024 ) -lt 25 ] ; then newDisk=25600 ; fi
+	newDisk=$(expr $freeDisk \* 90 / 100 / 1024)
+	if [ $(expr $newDisk / 1024 ) -lt 25 ] ; then newDisk=25600 ; fi
 else
-  firstDiskLow=1
+	firstDiskLow=1
 fi
 #
 # setting up default values
@@ -108,126 +108,126 @@ skipped=0
 partition=0
 other_drives=""
 format=",format=raw"
-if [ $dist  = "CentOS" ] ; then
-  qemupath=$(whereis qemu-kvm | sed "s/ /\n/g" | egrep "^/usr/libexec/")
-  #b=($(lsblk | egrep "part"  |  tr -s '[:space:]' | cut -f1 -d" " | tr -cd "[:print:]\n" | sed 's/^/\/dev\//'))
+if [ $dist	= "CentOS" ] ; then
+	qemupath=$(whereis qemu-kvm | sed "s/ /\n/g" | egrep "^/usr/libexec/")
+	#b=($(lsblk | egrep "part"  |  tr -s '[:space:]' | cut -f1 -d" " | tr -cd "[:print:]\n" | sed 's/^/\/dev\//'))
 else
-  qemupath=$(whereis qemu-system-x86_64 | cut -f2 -d" ")
-  #b=($(fdisk -l | grep "^/dev/" | tr -d "*" | tr -s '[:space:]' | cut -f1 -d" "))
+	qemupath=$(whereis qemu-system-x86_64 | cut -f2 -d" ")
+	#b=($(fdisk -l | grep "^/dev/" | tr -d "*" | tr -s '[:space:]' | cut -f1 -d" "))
 fi
 if [ $diskNumbers -eq 1 ] ; then # opened 1st if
 if [ $availableRAM -ge 4650 ] ; then # opened 2nd if
-  echo -e "${BLUE}For below option pass${NC} yes ${BLUE}iff, your VPS/Server came with${NC} boot system in ${NC}${RED}'RESCUE'${NC} mode ${BLUE}feature${NC}"
-  read -r -p "Do you want to completely delete your current Linux O.S.? (yes/no) : " deleteLinux
-  deleteLinux=$(echo "$deleteLinux" | head -c 1)
-  if [ ! -z $deleteLinux ] && [ $deleteLinux = 'Y' -o $deleteLinux = 'y' ] ; then
-    sudo wget -qO- /tmp https://archive.org/download/vkvm.tar_201903/vkvm.tar.gz | sudo tar xvz -C /tmp
-    qemupath=/tmp/qemu-system-x86_64
-    echo "erasing primary disk data"
-    sudo dd if=/dev/zero of=$firstDisk bs=1M count=1 # blank out the disk
-    echo "mounting devices"
-    mount -t tmpfs -o size=4500m tmpfs /mnt
-    mv /mediabots/* /mnt
-    mkdir /media/sw
-    mount -t tmpfs -o size=121m tmpfs /media/sw
-    mv /sw.iso /media/sw
-    custom_param_os="/mnt/"$(ls /mnt)
-    custom_param_sw="/media/sw/sw.iso"
-    availableRAM=$(echo $availableRAMcommand | bash)
-    custom_param_disk=$firstDisk
-    custom_param_ram="-m "$(expr $availableRAM - 500 )"M"
-    format=""
-    mounted=1
-  else
-    if [ $firstDiskLow = 0 ] ; then
-      if [ $partNumbers -gt 1 ] ; then 
-        idx=0;ix=0;
-        #for i in $(fdisk -l | grep "^/dev/" | tr -d "*" | tr -s '[:space:]' | cut -f5 -d" "); do
-        for i in $(lsblk | egrep "part"  |  tr -s '[:space:]' | cut -f4 -d" "); do
-        b=($(lsblk | egrep "part"  |  tr -s '[:space:]' | cut -f1 -d" " | tr -cd "[:alnum:]\n" | sed 's/^/\/dev\//'))
-if [[ $i == *"G"  ]]; then a=$(echo $i | tr -d "G"); a=${a%.*} ; if [ $a -ge 25 -a $ix = 0 -a ${b[idx]} != $os ] ; then firstDisk=${b[idx]} ; custom_param_disk=$firstDisk ; partition=1 ; ix=$((ix+3)) ; elif [ $a -ge 25 -a $ix = 3 -a ${b[idx]} != $os ] ; then other_drives="-drive file=${b[idx]},index=$ix,media=disk,format=raw " ; fi ; fi ;
-        idx=$((idx+1));
-        done
-        if [ $partition = 0 ] ;then 
-          echo "creating disk image"
-          sudo dd if=/dev/zero of=/disk.img bs=1024k seek=$newDisk count=0
-          custom_param_disk="/disk.img"
-        fi
-      else
-        echo "creating disk image"
-        sudo dd if=/dev/zero of=/disk.img bs=1024k seek=$newDisk count=0
-        custom_param_disk="/disk.img"
-      fi
-    else
-      skipped=1
-    fi
-  fi
+	echo -e "${BLUE}For below option pass${NC} yes ${BLUE}iff, your VPS/Server came with${NC} boot system in ${NC}${RED}'RESCUE'${NC} mode ${BLUE}feature${NC}"
+	read -r -p "Do you want to completely delete your current Linux O.S.? (yes/no) : " deleteLinux
+	deleteLinux=$(echo "$deleteLinux" | head -c 1)
+	if [ ! -z $deleteLinux ] && [ $deleteLinux = 'Y' -o $deleteLinux = 'y' ] ; then
+		sudo wget -qO- /tmp https://archive.org/download/vkvm.tar_201903/vkvm.tar.gz | sudo tar xvz -C /tmp
+		qemupath=/tmp/qemu-system-x86_64
+		echo "erasing primary disk data"
+		sudo dd if=/dev/zero of=$firstDisk bs=1M count=1 # blank out the disk
+		echo "mounting devices"
+		mount -t tmpfs -o size=4500m tmpfs /mnt
+		mv /mediabots/* /mnt
+		mkdir /media/sw
+		mount -t tmpfs -o size=121m tmpfs /media/sw
+		mv /sw.iso /media/sw
+		custom_param_os="/mnt/"$(ls /mnt)
+		custom_param_sw="/media/sw/sw.iso"
+		availableRAM=$(echo $availableRAMcommand | bash)
+		custom_param_disk=$firstDisk
+		custom_param_ram="-m "$(expr $availableRAM - 500 )"M"
+		format=""
+		mounted=1
+	else
+		if [ $firstDiskLow = 0 ] ; then
+			if [ $partNumbers -gt 1 ] ; then 
+				idx=0;ix=0;
+				#for i in $(fdisk -l | grep "^/dev/" | tr -d "*" | tr -s '[:space:]' | cut -f5 -d" "); do
+				for i in $(lsblk | egrep "part"  |  tr -s '[:space:]' | cut -f4 -d" "); do
+				b=($(lsblk | egrep "part"  |  tr -s '[:space:]' | cut -f1 -d" " | tr -cd "[:alnum:]\n" | sed 's/^/\/dev\//'))
+				if [[ $i == *"G"  ]]; then a=$(echo $i | tr -d "G"); a=${a%.*} ; if [ $a -ge 25 -a $ix = 0 -a ${b[idx]} != $os ] ; then firstDisk=${b[idx]} ; custom_param_disk=$firstDisk ; partition=1 ; ix=$((ix+3)) ; elif [ $a -ge 25 -a $ix = 3 -a ${b[idx]} != $os ] ; then other_drives="-drive file=${b[idx]},index=$ix,media=disk,format=raw " ; fi ; fi ;
+				idx=$((idx+1));
+				done
+				if [ $partition = 0 ] ;then 
+					echo "creating disk image"
+					sudo dd if=/dev/zero of=/disk.img bs=1024k seek=$newDisk count=0
+					custom_param_disk="/disk.img"
+				fi
+			else
+				echo "creating disk image"
+				sudo dd if=/dev/zero of=/disk.img bs=1024k seek=$newDisk count=0
+				custom_param_disk="/disk.img"
+			fi
+		else
+			skipped=1
+		fi
+	fi
 else
-  if [ $firstDiskLow = 0 ] ; then
-    if [ $partNumbers -gt 1 ] ; then 
-      idx=0;ix=0;
-      for i in $(lsblk | egrep "part"  |  tr -s '[:space:]' | cut -f4 -d" "); do
-      b=($(lsblk | egrep "part"  |  tr -s '[:space:]' | cut -f1 -d" " | tr -cd "[:alnum:]\n" | sed 's/^/\/dev\//'))
-      if [[ $i == *"G"  ]]; then a=$(echo $i | tr -d "G"); a=${a%.*} ; if [ $a -ge 25 -a $ix = 0 -a ${b[idx]} != $os ] ; then firstDisk=${b[idx]} ; custom_param_disk=$firstDisk ; partition=1 ; ix=$((ix+3)) ; elif [ $a -ge 25 -a $ix = 3 -a ${b[idx]} != $os ] ; then other_drives="-drive file=${b[idx]},index=$ix,media=disk,format=raw " ; fi ; fi ;
-      idx=$((idx+1));
-      done
-      if [ $partition = 0 ] ;then 
-        echo "creating disk image"
-        sudo dd if=/dev/zero of=/disk.img bs=1024k seek=$newDisk count=0
-        custom_param_disk="/disk.img"
-      fi
-    else
-      echo "creating disk image"
-      sudo dd if=/dev/zero of=/disk.img bs=1024k seek=$newDisk count=0
-      custom_param_disk="/disk.img"
-    fi
-  else
-    skipped=1
-  fi
+	if [ $firstDiskLow = 0 ] ; then
+		if [ $partNumbers -gt 1 ] ; then 
+			idx=0;ix=0;
+			for i in $(lsblk | egrep "part"  |  tr -s '[:space:]' | cut -f4 -d" "); do
+			b=($(lsblk | egrep "part"  |  tr -s '[:space:]' | cut -f1 -d" " | tr -cd "[:alnum:]\n" | sed 's/^/\/dev\//'))
+			if [[ $i == *"G"  ]]; then a=$(echo $i | tr -d "G"); a=${a%.*} ; if [ $a -ge 25 -a $ix = 0 -a ${b[idx]} != $os ] ; then firstDisk=${b[idx]} ; custom_param_disk=$firstDisk ; partition=1 ; ix=$((ix+3)) ; elif [ $a -ge 25 -a $ix = 3 -a ${b[idx]} != $os ] ; then other_drives="-drive file=${b[idx]},index=$ix,media=disk,format=raw " ; fi ; fi ;
+			idx=$((idx+1));
+			done
+			if [ $partition = 0 ] ;then 
+				echo "creating disk image"
+				sudo dd if=/dev/zero of=/disk.img bs=1024k seek=$newDisk count=0
+				custom_param_disk="/disk.img"
+			fi
+		else
+			echo "creating disk image"
+			sudo dd if=/dev/zero of=/disk.img bs=1024k seek=$newDisk count=0
+			custom_param_disk="/disk.img"
+		fi
+	else
+		skipped=1
+	fi
 fi # 2nd if closed
 else # 1st if else
 if [ $availableRAM -ge 4650 ] ; then
-  read -r -p "Do you want to completely delete your current Linux O.S.? (yes/no) : " deleteLinux
-  deleteLinux=$(echo "$deleteLinux" | head -c 1)
-  if [ ! -z $deleteLinux ] && [ $deleteLinux = 'Y' -o $deleteLinux = 'y' ] ; then
-    sudo wget -qO- /tmp https://archive.org/download/vkvm.tar_201903/vkvm.tar.gz | sudo tar xvz -C /tmp
-    qemupath=/tmp/qemu-system-x86_64
-    echo "erasing primary disk data"
-    sudo dd if=/dev/zero of=$firstDisk bs=1M count=1 # blank out the disk
-    echo "mounting devices"
-    mount -t tmpfs -o size=4500m tmpfs /mnt
-    mv /mediabots/* /mnt
-    mkdir /media/sw
-    mount -t tmpfs -o size=121m tmpfs /media/sw
-    mv /sw.iso /media/sw
-    custom_param_os="/mnt/"$(ls /mnt)
-    custom_param_sw="/media/sw/sw.iso"
-    availableRAM=$(echo $availableRAMcommand | bash)
-    custom_param_disk=$firstDisk
-    custom_param_ram="-m "$(expr $availableRAM - 500 )"M"
-    format=""
-    mounted=1
-  else
-    echo "using secondary disk for installation."
-    custom_param_disk=$(fdisk -l | grep "Disk /dev/" | awk 'NR==2' | cut -f2 -d" " | cut -f1 -d":") # 2nd disk chosen
-  fi
+	read -r -p "Do you want to completely delete your current Linux O.S.? (yes/no) : " deleteLinux
+	deleteLinux=$(echo "$deleteLinux" | head -c 1)
+	if [ ! -z $deleteLinux ] && [ $deleteLinux = 'Y' -o $deleteLinux = 'y' ] ; then
+		sudo wget -qO- /tmp https://archive.org/download/vkvm.tar_201903/vkvm.tar.gz | sudo tar xvz -C /tmp
+		qemupath=/tmp/qemu-system-x86_64
+		echo "erasing primary disk data"
+		sudo dd if=/dev/zero of=$firstDisk bs=1M count=1 # blank out the disk
+		echo "mounting devices"
+		mount -t tmpfs -o size=4500m tmpfs /mnt
+		mv /mediabots/* /mnt
+		mkdir /media/sw
+		mount -t tmpfs -o size=121m tmpfs /media/sw
+		mv /sw.iso /media/sw
+		custom_param_os="/mnt/"$(ls /mnt)
+		custom_param_sw="/media/sw/sw.iso"
+		availableRAM=$(echo $availableRAMcommand | bash)
+		custom_param_disk=$firstDisk
+		custom_param_ram="-m "$(expr $availableRAM - 500 )"M"
+		format=""
+		mounted=1
+	else
+		echo "using secondary disk for installation."
+		custom_param_disk=$(fdisk -l | grep "Disk /dev/" | awk 'NR==2' | cut -f2 -d" " | cut -f1 -d":") # 2nd disk chosen
+	fi
 else
-  echo "using secondary disk for installation.."
-  custom_param_disk=$(fdisk -l | grep "Disk /dev/" | awk 'NR==2' | cut -f2 -d" " | cut -f1 -d":")
+	echo "using secondary disk for installation.."
+	custom_param_disk=$(fdisk -l | grep "Disk /dev/" | awk 'NR==2' | cut -f2 -d" " | cut -f1 -d":")
 fi
 fi # closed 1st if
 # Adding other disks only if multi partitions are not exist
 if [ $partition = 0 ] ; then
 ix=2
 if [ $custom_param_disk != "/disk.img" ] ; then
-  for i in $(fdisk -l | grep "Disk /dev/" | cut -f2 -d" " | cut -f1 -d ":") ; do
-  if [ $i != $custom_param_disk ];then 
-  #echo $i;
-  ix=$((ix+1))
-  other_drives=$other_drives"-drive file=$i,index=$ix,media=disk,format=raw "
-  if [ $ix = 3 ]; then break; fi
-  fi
-  done
+	for i in $(fdisk -l | grep "Disk /dev/" | cut -f2 -d" " | cut -f1 -d ":") ; do
+	if [ $i != $custom_param_disk ];then 
+	#echo $i;
+	ix=$((ix+1))
+	other_drives=$other_drives"-drive file=$i,index=$ix,media=disk,format=raw "
+	if [ $ix = 3 ]; then break; fi
+	fi
+	done
 fi
 fi
 #
@@ -235,7 +235,7 @@ fi
 echo "[ Running the KVM ]"
 if [ $skipped = 0 ] ; then
 echo "[.] running QEMU-KVM"
-sudo $qemupath -net nic -net user,hostfwd=tcp::3389-:3389 -show-cursor $custom_param_ram -localtime -enable-kvm -cpu host,hv_relaxed,hv_spinlocks=0x1fff,hv_vapic,hv_time,+nx -M pc -smp cores=$cpus -vga std -machine type=pc,accel=kvm -usb -device usb-tablet -k en-us -drive file=$custom_param_disk,index=0,media=disk$format -drive file=$custom_param_os,index=1,media=cdrom -drive file=$custom_param_sw,index=2,media=cdrom $other_drives -boot once=d -vnc :9 &  
+sudo $qemupath -net nic -net user,hostfwd=tcp::3389-:3389 -show-cursor $custom_param_ram -localtime -enable-kvm -cpu host,hv_relaxed,hv_spinlocks=0x1fff,hv_vapic,hv_time,+nx -M pc -smp cores=$cpus -vga std -machine type=pc,accel=kvm -usb -device usb-tablet -k en-us -drive file=$custom_param_disk,index=0,media=disk$format -drive file=$custom_param_os,index=1,media=cdrom -drive file=$custom_param_sw,index=2,media=cdrom $other_drives -boot once=d -vnc :9 &	
 # [note- no sudo should be used after that]
 #pidqemu=$(pgrep qemu) # does not work
 pid=$(echo $! | head -1)
