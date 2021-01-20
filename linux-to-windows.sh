@@ -36,9 +36,9 @@ link1_status=$(curl -Is https://archive.org/download/6001.18000.0801181840x86fre
 link2_status=$(curl -Is https://archive.org/download/6001.18000.0801181840x86freserverenuskrmsfreendvd/6001.18000.080118-1840_x86fre_Server_en-us-KRMSFRE_EN_DVD.iso | grep HTTP | cut -f2 -d" ")
 #sudo wget -P /mediabots https://cutt.ly/AjSQqSJ # Windows Server 2012 R2 
 if [ $link1_status = "200" ] ; then 
-	sudo wget -O /mediabots/https://archive.org/download/6001.18000.0801181840x86freserverenuskrmsfreendvd/6001.18000.080118-1840_x86fre_Server_en-us-KRMSFRE_EN_DVD.iso
+	sudo wget -O /mediabots/https://archive.org/download/6001.18000.0801181840x86freserverenuskrmsfreendvd/6001.18000.080118-1840_x86fre_Server_en-us-KRMSFRE_EN_DVD.iso.ISO
 elif [ $link2_status = "200" -o $link2_status = "301" -o $link2_status = "302" ] ; then 
-	sudo wget -P /mediabots https://archive.org/download/6001.18000.0801181840x86freserverenuskrmsfreendvd/6001.18000.080118-1840_x86fre_Server_en-us-KRMSFRE_EN_DVD.iso
+	sudo wget -P /mediabots https://archive.org/download/6001.18000.0801181840x86freserverenuskrmsfreendvd/6001.18000.080118-1840_x86fre_Server_en-us-KRMSFRE_EN_DVD.iso.ISO
 else
 	echo -e "${RED}[Error]${NC} ${YELLOW}Sorry! None of Windows OS image urls are available , please report about this issue on Github page : ${NC}https://github.com/mediabots/Linux-to-Windows-with-QEMU"
 	echo "Exiting.."
