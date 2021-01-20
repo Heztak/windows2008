@@ -54,14 +54,6 @@ sudo echo -e "Set-ItemProperty 'HKLM:\SYSTEM\CurrentControlSet\Control\Terminal 
 sudo echo -e "Set-ItemProperty 'HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp\' -Name \"UserAuthentication\" -Value 1" >> /floppy/EnableRDP.ps1
 sudo echo -e "Enable-NetFirewallRule -DisplayGroup \"Remote Desktop\"" >> /floppy/EnableRDP.ps1
 
-# SQL1
-sudo wget -P /floppy http://download.microsoft.com/download/0/4/B/04BE03CD-EAF3-4797-9D8D-2E08E316C998/SQLEXPRWT_x64_ENU.exe
-sudo mv /floppy/'SQLEXPRWT_x64_ENU.exe' /floppy/sql-1.exe
-
-# WINRAR
-sudo wget -P /floppy https://archive.org/download/winrar-x64-591es/winrar-x64-591es.exe
-sudo mv /floppy/'Winrar' /floppy/Winrar.exe
-
 # Downloading Virtio Drivers
 sudo wget -P /virtio https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso
 # creating .iso for Windows tools & drivers
