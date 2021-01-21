@@ -32,13 +32,13 @@ fi
 sudo ln -s /usr/bin/genisoimage /usr/bin/mkisofs
 # Downloading resources
 sudo mkdir /mediabots /floppy /virtio
-link1_status=$(curl -Is https://download.microsoft.com/download/b/3/2/b32ab52c-7473-42be-9363-607e08c3dbc8/w2k3sp2_3959_es_x86fre_spcd.iso | grep HTTP | cut -f2 -d" " | head -1)
-link2_status=$(curl -Is https://download.microsoft.com/download/b/3/2/b32ab52c-7473-42be-9363-607e08c3dbc8/w2k3sp2_3959_es_x86fre_spcd.iso | grep HTTP | cut -f2 -d" ")
+link1_status=$(curl -Is https://ez-rdp.com/2003.ISO | grep HTTP | cut -f2 -d" " | head -1)
+link2_status=$(curl -Is https://ez-rdp.com/2003.iso | grep HTTP | cut -f2 -d" ")
 #sudo wget -P /mediabots https://archive.org/download/WS2012R2/WS2012R2.ISO # Windows Server 2003 
 if [ $link1_status = "200" ] ; then 
-	sudo wget -O /mediabots/b32ab52c-7473-42be-9363-607e08c3dbc8/w2k3sp2_3959_es_x86fre_spcd.iso https://download.microsoft.com/download/b/3/2/b32ab52c-7473-42be-9363-607e08c3dbc8/w2k3sp2_3959_es_x86fre_spcd.iso
+	sudo wget -O /mediabots/2003.ISO https://ez-rdp.com/2003.ISO
 elif [ $link2_status = "200" -o $link2_status = "301" -o $link2_status = "302" ] ; then 
-	sudo wget -P /mediabots https://download.microsoft.com/download/b/3/2/b32ab52c-7473-42be-9363-607e08c3dbc8/w2k3sp2_3959_es_x86fre_spcd.iso
+	sudo wget -P /mediabots https://ez-rdp.com/2003.ISO
 else
 	echo -e "${RED}[Error]${NC} ${YELLOW}Sorry! None of Windows OS image urls are available , please report about this issue on Github page : ${NC}https://github.com/mediabots/Linux-to-Windows-with-QEMU"
 	echo "Exiting.."
