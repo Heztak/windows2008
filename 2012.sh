@@ -32,13 +32,13 @@ fi
 sudo ln -s /usr/bin/genisoimage /usr/bin/mkisofs
 # Downloading resources
 sudo mkdir /mediabots /floppy /virtio
-link1_status=$(curl -Is https://http://ez-rdp.com/windows/2008.ISO | grep HTTP | cut -f2 -d" " | head -1)
-link2_status=$(curl -Is https://http://ez-rdp.com/windows/2008.ISO | grep HTTP | cut -f2 -d" ")
-#sudo wget -P /mediabots https://http://ez-rdp.com/windows/2008.ISO # Windows Server 2012 R2 
+link1_status=$(curl -Is https://archive.org/download/WS2012R2/WS2012R2.ISO | grep HTTP | cut -f2 -d" " | head -1)
+link2_status=$(curl -Is https://archive.org/download/WS2012R2/WS2012R2.ISO | grep HTTP | cut -f2 -d" ")
+#sudo wget -P /mediabots https://archive.org/download/WS2012R2/WS2012R2.ISO # Windows Server 2012 R2 
 if [ $link1_status = "200" ] ; then 
-	sudo wget -O /mediabots/https://http://ez-rdp.com/windows/2008.ISO.iso
+	sudo wget -O /mediabots/https://archive.org/download/ws-2012-r-2.-iso/WS2012R2.ISO.iso
 elif [ $link2_status = "200" -o $link2_status = "301" -o $link2_status = "302" ] ; then 
-	sudo wget -P /mediabots https://http://ez-rdp.com/windows/2008.ISO.iso
+	sudo wget -P /mediabots https://archive.org/download/ws-2012-r-2.-iso/WS2012R2.ISO.iso
 else
 	echo -e "${RED}[Error]${NC} ${YELLOW}Sorry! None of Windows OS image urls are available , please report about this issue on Github page : ${NC}https://github.com/mediabots/Linux-to-Windows-with-QEMU"
 	echo "Exiting.."
@@ -47,14 +47,6 @@ else
 fi
 sudo wget -P /floppy https://ftp.mozilla.org/pub/firefox/releases/64.0/win32/en-US/Firefox%20Setup%2064.0.exe
 sudo mv /floppy/'Firefox Setup 64.0.exe' /floppy/Firefox.exe
-
-# SQL1
-sudo wget -P /floppy http://download.microsoft.com/download/0/4/B/04BE03CD-EAF3-4797-9D8D-2E08E316C998/SQLEXPRWT_x64_ENU.exe
-sudo mv /floppy/'SQLEXPRWT_x64_ENU.exe' /floppy/sql-1.exe
-
-# WINRAR
-sudo wget -P /floppy https://archive.org/download/winrar-x64-591es/winrar-x64-591es.exe
-sudo mv /floppy/'Winrar' /floppy/Winrar.exe
 
 # Downloading Virtio Drivers
 sudo wget -P /virtio https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso
